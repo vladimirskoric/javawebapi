@@ -1,0 +1,269 @@
+openapi: 3.0.0
+info:
+  title: Quarkus Java Web API
+  description: >-
+    Sample Java Web API in Quarkus
+  version: "1.0.0"
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: APIs
+    description: Publicly accessible endpoints
+security:
+  - BearerAuth: []
+paths:
+  /auth/login:
+    post:
+      tags:
+        - APIs
+      summary: >-
+        Authentication endpoint. This requires a email and password.
+      operationId: auth
+      requestBody:
+        description: >-
+          Login request body contains the username and password
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        200:
+          description: >-
+            A successful login will return a success message.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        default:
+          description: >-
+            An error occured while performing the operation. A details JSON error is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+  /users:
+    get:
+      tags:
+        - APIs
+      summary: >-
+        Retrieves all users
+      operationId: getusers
+      responses:
+        200:
+          description: >-
+            A list of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    post:
+      tags:
+        - APIs
+      summary: >-
+        Add a user
+      operationId: adduser
+      requestBody:
+        description: >-
+          Add user details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        200:
+          description: >-
+            An id of the user
+          content:
+            application/json:
+              schema:
+                type: number
+
+  /users/{id}:
+    get:
+      tags:
+        - APIs
+      summary: >-
+        Retrieves user by id
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+            description: the ID of the user
+          example: 1
+      responses:
+        200:
+          description: >-
+            A list of users
+          content:
+            application/json:
+              schema:
+                type: number
+    delete:
+      tags:
+        - APIs
+      summary: >-
+        Delete user by id
+      operationId: deleteUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+            description: the ID of the user
+          example: 1
+      responses:
+        200:
+          description: >-
+            A list of users
+          content:
+            application/json:
+              schema:
+                type: string
+              example:
+                "User deleted"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        id:
+          type: string
+          description: >-
+            a unique identifier for this particular occurrence of the problem.
+        links:
+          type: object
+          description: >-
+            a links object containing the following members;
+          properties:
+            about:
+              type: string
+              description: >-
+                a link that leads to further details about this particular occurrence of the problem.
+          additionalProperties: true
+        status:
+          type: string
+          description: >-
+            the HTTP status code applicable to this problem, expressed as a
+            string value.
+        code:
+          type: string
+          description: >-
+            an application-specific error code, expressed as a string value.
+        title:
+          type: string
+          description: >-
+            a short, human-readable summary of the problem that SHOULD NOT
+            change from occurrence to occurrence of the problem, except for
+            purposes of localization.
+        detail:
+          type: string
+          description: >-
+            a human-readable explanation specific to this occurrence of the
+            problem. Like title, this field’s value can be localized.
+        source:
+          type: array
+          description: >-
+            an object containing references to the source of the error, optionally including any of the following members;
+          items:
+            type: object
+            properties:
+              pointer:
+                type: string
+                description: >-
+                  a JSON Pointer [RFC6901] to the associated entity in the
+                  request document [e.g. "/data" for a primary data object, or "
+                  /data/attributes/title" for a specific attribute].
+              parameter:
+                type: string
+                description: >-
+                  a string indicating which URI query parameter caused the error
+                  .
+        meta:
+          type: object
+          description: >-
+            a meta object containing non-standard meta-information about the error.
+          additionalProperties: true
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: >-
+            The email to login.
+          example: 'Neo.Anderson@exodus.com'
+        password:
+          type: string
+          format: password
+          description: >-
+            The password needed to login.
+          example: 'password'
+
+    LoginResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: >-
+            A  success message
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: >-
+            The id of the user
+          example: 1
+        name:
+          type: string
+          description: >-
+            The name of the user
+        email:
+          type: string
+          description: >-
+            The email address of the user
+        password:
+          type: string
+          description: >-
+            The password of the user
+        lastlogin:
+          type: string
+          description: >-
+            The date when user last logged in
+
+    UserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: >-
+            The name of the user
+          example: Neo Anderson
+        email:
+          type: string
+          description: >-
+            The email address of the user
+          example:
+            Neo.Anderson@exodus.com
+        password:
+          type: string
+          description: >-
+            The password of the user
+          example:
+            password
+
+            
